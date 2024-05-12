@@ -8,7 +8,60 @@ To write a python program for creating File Transfer using TCP Sockets Links
 4. Open the file and then send it to the client in byte format.
 5. In the client side receive the file from server and then write the content into it.
 ## PROGRAM
+## Client:
+
+import socket
+def receive_file(filename, server_socket):
+    with open(filename, 'wb') as file:
+        while True:
+            data = server_socket.recv(1024)
+            if not data:
+                break
+             file.write(data)
+def start_client():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(('127.0.0.1', 5555))
+    filename = input("Enter filename to save: ")
+    client_socket.sendall(filename.encode())
+    receive_file(filename, client_socket)
+    print(f"File '{filename}' received successfully")
+    client_socket.close()
+start_client()
+
+## Server:
+
+import socket
+def send_file(filename, client_socket):
+    with open(filename, 'rb') as file:
+        for data in file:
+            client_socket.sendall(data)
+def start_server():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('127.0.0.1', 5555))
+    server_socket.listen(5)
+    print("Server started, listening on port 5555")
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"Accepted connection from {addr}")
+        filename = input("Enter filename to send: ")
+        try:
+            send_file(filename, client_socket)
+            print(f"File '{filename}' sent successfully")
+        except FileNotFoundError:
+            print(f"File '{filename}' not found")
+        client_socket.close()
+start_server()
+
+
 ## OUPUT
+## Client:
+![WhatsApp Image 2024-05-10 at 11 26 58_e7c7f35a](https://github.com/srrihaari/3c.FILE_TRANSFER_USING_TCP_SOCKETS/assets/145550674/a9fbc733-cb67-4fe8-839c-b9aba3a85034)
+
+## Server:
+![WhatsApp Image 2024-05-10 at 11 27 02_7953fc32](https://github.com/srrihaari/3c.FILE_TRANSFER_USING_TCP_SOCKETS/assets/145550674/6580ea93-2651-4aa0-a6fc-02f6ec22d0b8)
+
+
+
 ## RESULT
 Thus, the python program for creating File Transfer using TCP Sockets Links was 
 successfully created and executed.
